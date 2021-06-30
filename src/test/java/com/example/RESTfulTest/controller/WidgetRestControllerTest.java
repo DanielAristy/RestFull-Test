@@ -3,6 +3,7 @@ package com.example.RESTfulTest.controller;
 import com.example.RESTfulTest.model.Widget;
 import com.example.RESTfulTest.service.WidgetService;
 import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Optional;
+
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -59,6 +63,15 @@ class WidgetRestControllerTest {
                 .andExpect(jsonPath("$[1].name", is("Widget 2 Name")))
                 .andExpect(jsonPath("$[1].description", is("Description 2")))
                 .andExpect(jsonPath("$[1].version", is(4)));
+    }
+
+    @Test
+    @DisplayName("GET /rest/widget/1 - Not Found")
+    void testGetWidgetByIdNotFound() throws Exception {
+        doReturn(Optional.empty()).when(service).findById(1l);
+
+        mockMvc.perform(get("/rest/widget/{id}", 1L))
+                .andExpect(status().isNotFound());
     }
 
 }
